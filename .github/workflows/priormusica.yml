@@ -52,9 +52,13 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /home/priormusica-app/htdocs/app.priormusica.lt
+            cd /home/priormusica-app/htdocs
 
-            git pull origin main
+            rm -rf app.priormusica.lt
+
+            git clone https://github.com/pekostudio/priormusic2026.git app.priormusica.lt
+
+            cd app.priormusica.lt
 
             composer install --no-dev --optimize-autoloader
 
