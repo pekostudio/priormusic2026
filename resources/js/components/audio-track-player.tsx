@@ -1,0 +1,189 @@
+import 'react-h5-audio-player/lib/styles.css';
+
+import { useEffect, useRef } from 'react';
+import AudioPlayer, { RHAP_UI } from 'react-h5-audio-player';
+import { WaveformPreview } from '@/components/waveform-preview';
+import { useAudioPlayer } from '@/hooks/use-audio-player';
+
+export function AudioTrackPlayer() {
+    const playerRef = useRef<AudioPlayer>(null);
+    const {
+        clearPendingSeek,
+        currentProgress,
+        currentTrack,
+        duration,
+        isPlaying,
+        pendingSeek,
+        playRequestId,
+        setIsPlaying,
+        setPlaybackProgress,
+    } = useAudioPlayer();
+
+    useEffect(() => {
+        const audio = playerRef.current?.audio.current;
+
+        if (!audio) {
+            return;
+        }
+
+        if (isPlaying) {
+            void audio.play();
+        } else {
+            audio.pause();
+        }
+    }, [currentTrack?.audioUrl, isPlaying, playRequestId]);
+
+    useEffect(() => {
+        const audio = playerRef.current?.audio.current;
+
+        if (
+            !audio ||
+            !currentTrack ||
+            !pendingSeek ||
+            pendingSeek.trackId !== currentTrack.id ||
+            audio.currentSrc !==
+                new URL(currentTrack.audioUrl, window.location.href).href ||
+            !Number.isFinite(audio.duration) ||
+            audio.duration <= 0
+        ) {
+            return;
+        }
+
+        const nextTime = audio.duration * pendingSeek.progress;
+
+        Reflect.set(audio, 'currentTime', nextTime);
+        setPlaybackProgress(nextTime, audio.duration);
+        clearPendingSeek();
+    }, [
+        clearPendingSeek,
+        currentTrack,
+        duration,
+        pendingSeek,
+        setPlaybackProgress,
+    ]);
+
+    const syncAudioTime = () => {
+        const audio = playerRef.current?.audio.current;
+
+        if (!audio) {
+            return;
+        }
+
+        setPlaybackProgress(
+            audio.currentTime || 0,
+            Number.isFinite(audio.duration) ? audio.duration : 0,
+        );
+    };
+
+    const seekToProgress = (progress: number) => {
+        const audio = playerRef.current?.audio.current;
+
+        if (!audio || !Number.isFinite(audio.duration) || audio.duration <= 0) {
+            return;
+        }
+
+        const nextTime = audio.duration * progress;
+
+        Reflect.set(audio, 'currentTime', nextTime);
+        setPlaybackProgress(nextTime, audio.duration);
+
+        if (!isPlaying) {
+            setIsPlaying(true);
+        }
+    };
+
+    const logPlay = () => {
+        if (!currentTrack?.playUrl) {
+            return;
+        }
+
+        const csrfToken = document
+            .querySelector<HTMLMetaElement>('meta[name="csrf-token"]')
+            ?.getAttribute('content');
+
+        void fetch(currentTrack.playUrl, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                ...(csrfToken ? { 'X-CSRF-TOKEN': csrfToken } : {}),
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            body: JSON.stringify({}),
+        });
+    };
+
+    return (
+        <div className="fixed right-0 bottom-0 left-0 z-40 border-t border-border bg-background/95 shadow-2xl backdrop-blur supports-[backdrop-filter]:bg-background/85">
+            <div className="grid gap-3 p-3 md:grid-cols-[minmax(220px,320px)_120px_minmax(220px,1fr)] md:items-center md:px-4">
+                <div className="flex min-w-0 items-center gap-3">
+                    <div className="size-12 overflow-hidden rounded-md bg-muted">
+                        {currentTrack?.coverUrl && (
+                            <img
+                                src={currentTrack.coverUrl}
+                                alt=""
+                                className="size-full object-cover"
+                            />
+                        )}
+                    </div>
+                    <div className="min-w-0">
+                        <p className="truncate text-sm font-medium">
+                            {currentTrack?.title ?? 'Select a track'}
+                        </p>
+                        <p className="mt-1 truncate text-xs text-muted-foreground">
+                            {currentTrack?.artist ??
+                                'Playback will stay here while you browse.'}
+                        </p>
+                    </div>
+                </div>
+
+                {currentTrack ? (
+                    <AudioPlayer
+                        ref={playerRef}
+                        src={currentTrack.audioUrl}
+                        onPlay={() => {
+                            setIsPlaying(true);
+                            logPlay();
+                        }}
+                        onPause={() => setIsPlaying(false)}
+                        onEnded={() => setIsPlaying(false)}
+                        onLoadedMetaData={syncAudioTime}
+                        onListen={syncAudioTime}
+                        onSeeked={syncAudioTime}
+                        listenInterval={250}
+                        showJumpControls={false}
+                        customProgressBarSection={[]}
+                        customControlsSection={[RHAP_UI.MAIN_CONTROLS]}
+                        autoPlayAfterSrcChange={true}
+                        style={{
+                            background: 'transparent',
+                            boxShadow: 'none',
+                            padding: 0,
+                        }}
+                    />
+                ) : (
+                    <div className="flex min-h-14 items-center justify-center rounded-md border border-border bg-muted/40 px-4 text-sm text-muted-foreground">
+                        Select a track to start playback.
+                    </div>
+                )}
+
+                <div className="min-w-0">
+                    {currentTrack ? (
+                        <WaveformPreview
+                            peaksUrl={currentTrack.peaksUrl}
+                            progress={currentProgress}
+                            amplitude={1.8}
+                            interactive={true}
+                            onSeek={seekToProgress}
+                        />
+                    ) : (
+                        <div className="flex h-20 items-center justify-center rounded-md border border-dashed border-border text-xs text-muted-foreground">
+                            Track waveform
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+}

@@ -1,0 +1,29 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Models\AlbumTrack;
+use App\Models\TrackPlay;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends Factory<TrackPlay>
+ */
+class TrackPlayFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'user_id' => User::factory(),
+            'album_track_id' => AlbumTrack::factory(),
+            'played_at' => fake()->dateTimeBetween('-1 year'),
+            'duration_seconds' => fake()->numberBetween(30, 600),
+        ];
+    }
+}
