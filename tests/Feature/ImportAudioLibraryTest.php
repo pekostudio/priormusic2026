@@ -128,3 +128,24 @@ test('import command does not warm legacy track filter cache', function () {
         ->doesntExpectOutputToContain('Track filter options cache warmed.')
         ->assertSuccessful();
 });
+
+test('it imports semicolon separated keywords as individual keyword tags', function () {
+    $basePath = public_path('audio/import-test');
+    $albumPath = $basePath.'/Album One';
+    $metadataPath = $albumPath.'/Album One_HM_STANDARD';
+
+    File::ensureDirectoryExists($metadataPath);
+    File::put($albumPath.'/Song One.mp3', 'fake mp3 bytes');
+    File::put($metadataPath.'/album_metadata.csv', implode("\n", [
+        'LIBRARY: Name,ALBUM: Code,ALBUM: Title,ALBUM: Display Title,ALBUM: Release Date,TRACK: Number,TRACK: Title,TRACK: Keywords,TRACK: Audio Filename',
+        'Prior Library,PRIOR001,Album One,Album One Display,2026-05-01,1,Song One,"Swag; Swagger; Banging; Hip-Hop; Rap; Trap",Song One.mp3',
+    ]));
+
+    app(ImportAudioLibrary::class)($basePath);
+
+    $track = Track::query()->sole();
+
+    expect(Keyword::query()->orderBy('name')->pluck('name')->all())
+        ->toBe(['Banging', 'Hip-Hop', 'Rap', 'Swag', 'Swagger', 'Trap'])
+        ->and($track->keywordTags()->count())->toBe(6);
+});

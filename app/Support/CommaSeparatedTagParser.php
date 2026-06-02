@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 class CommaSeparatedTagParser
 {
     /**
-     * Parse a raw comma-separated tag string into normalized tag values.
+     * Parse a raw separated tag string into normalized tag values.
      *
      * @return Collection<int, array{name:string, slug:string}>
      */
@@ -19,6 +19,7 @@ class CommaSeparatedTagParser
         }
 
         return Str::of($tags)
+            ->replace(['|', ';'], ',')
             ->explode(',')
             ->map(fn (string $tag): string => trim(preg_replace('/\s+/', ' ', $tag) ?? ''))
             ->filter()
