@@ -18,6 +18,7 @@ export function WaveformPreview({
     onSeek,
 }: WaveformPreviewProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const [shouldLoadPeaks, setShouldLoadPeaks] = useState(false);
     const [peaks, setPeaks] = useState<number[]>([]);
 
     const seekFromPointer = useCallback(
@@ -82,31 +83,65 @@ export function WaveformPreview({
     };
 
     useEffect(() => {
-        let cancelled = false;
+        const canvas = canvasRef.current;
 
-        fetch(peaksUrl, {
-            credentials: 'same-origin',
-            headers: {
-                Accept: 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
+        if (!canvas) {
+            return;
+        }
+
+        if (!('IntersectionObserver' in window)) {
+            setShouldLoadPeaks(true);
+
+            return;
+        }
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry?.isIntersecting) {
+                    setShouldLoadPeaks(true);
+                    observer.disconnect();
+                }
             },
-        })
-            .then((response) => (response.ok ? response.json() : null))
-            .then((data: { peaks?: number[] } | null) => {
-                if (!cancelled) {
-                    setPeaks(Array.isArray(data?.peaks) ? data.peaks : []);
-                }
+            { rootMargin: '300px 0px' },
+        );
+
+        observer.observe(canvas);
+
+        return () => observer.disconnect();
+    }, []);
+
+    useEffect(() => {
+        if (!shouldLoadPeaks) {
+            return;
+        }
+
+        let cancelled = false;
+        const timeoutId = window.setTimeout(() => {
+            fetch(peaksUrl, {
+                credentials: 'same-origin',
+                headers: {
+                    Accept: 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
             })
-            .catch(() => {
-                if (!cancelled) {
-                    setPeaks([]);
-                }
-            });
+                .then((response) => (response.ok ? response.json() : null))
+                .then((data: { peaks?: number[] } | null) => {
+                    if (!cancelled) {
+                        setPeaks(Array.isArray(data?.peaks) ? data.peaks : []);
+                    }
+                })
+                .catch(() => {
+                    if (!cancelled) {
+                        setPeaks([]);
+                    }
+                });
+        }, 100);
 
         return () => {
             cancelled = true;
+            window.clearTimeout(timeoutId);
         };
-    }, [peaksUrl]);
+    }, [peaksUrl, shouldLoadPeaks]);
 
     useEffect(() => {
         const canvas = canvasRef.current;

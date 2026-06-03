@@ -6,10 +6,12 @@ use App\Models\Genre;
 use App\Models\Keyword;
 use App\Models\Library;
 use App\Models\MusicUsageEvent;
+use App\Models\Playlist;
 use App\Models\Track;
 use App\Models\TrackDownload;
 use App\Models\TrackPlay;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -61,6 +63,10 @@ test('authenticated users can view tracks page with custom filters', function ()
 
     $user = User::factory()->create();
     $user->favoriteAlbumTracks()->attach($albumTrack);
+    $playlist = Playlist::factory()->for($user)->create([
+        'name' => 'Campaign shortlist',
+    ]);
+    $playlist->albumTracks()->attach($albumTrack);
 
     Track::factory()->create([
         'name' => 'Other Song',
@@ -68,15 +74,21 @@ test('authenticated users can view tracks page with custom filters', function ()
         'bpm' => 90,
     ]);
 
-    $response = $this
-        ->actingAs($user)
-        ->get(route('tracks', [
-            'search' => 'Bright',
-            'genre_id' => $genre->id,
-            'keyword_id' => $keyword->id,
-            'bpm_min' => 100,
-            'bpm_max' => 130,
-        ]));
+    Model::preventLazyLoading();
+
+    try {
+        $response = $this
+            ->actingAs($user)
+            ->get(route('tracks', [
+                'search' => 'Bright',
+                'genre_id' => $genre->id,
+                'keyword_id' => $keyword->id,
+                'bpm_min' => 100,
+                'bpm_max' => 130,
+            ]));
+    } finally {
+        Model::preventLazyLoading(false);
+    }
 
     $response
         ->assertOk()
@@ -91,6 +103,7 @@ test('authenticated users can view tracks page with custom filters', function ()
             ->where('tracks.data.0.title', 'Bright Song Display')
             ->where('tracks.data.0.album.title', 'Prior Album')
             ->where('tracks.data.0.album_track.is_favorite', true)
+            ->where('tracks.data.0.album_track.playlist_ids', [$playlist->id])
             ->has('tracks.data.0.album_track.audio_url')
             ->where('filterOptions.genres.0.name', 'Corporate')
             ->where('filterOptions.keywords.0.name', 'Bright'));

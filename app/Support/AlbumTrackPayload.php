@@ -43,17 +43,48 @@ class AlbumTrackPayload
             'play_url' => route('tracks.plays.store', $albumTrack),
             'favorite_url' => route('tracks.favorite.store', $albumTrack),
             'unfavorite_url' => route('tracks.favorite.destroy', $albumTrack),
-            'is_favorite' => $user?->favoriteAlbumTracks()
-                ->whereKey($albumTrack->id)
-                ->exists() ?? false,
+            'is_favorite' => $this->isFavorite($albumTrack, $user),
             'playlist_url' => route('tracks.playlists.store', $albumTrack),
-            'playlist_ids' => $user !== null
-                ? $user->playlists()
-                    ->whereHas('albumTracks', fn ($query) => $query->whereKey($albumTrack->id))
-                    ->pluck('playlists.id')
-                    ->values()
-                : [],
+            'playlist_ids' => $this->playlistIds($albumTrack, $user),
         ];
+    }
+
+    private function isFavorite(AlbumTrack $albumTrack, ?User $user): bool
+    {
+        if ($user === null) {
+            return false;
+        }
+
+        if ($albumTrack->relationLoaded('favoredByUsers')) {
+            return $albumTrack->favoredByUsers->contains('id', $user->id);
+        }
+
+        return $user->favoriteAlbumTracks()
+            ->whereKey($albumTrack->id)
+            ->exists();
+    }
+
+    /**
+     * @return list<int>
+     */
+    private function playlistIds(AlbumTrack $albumTrack, ?User $user): array
+    {
+        if ($user === null) {
+            return [];
+        }
+
+        if ($albumTrack->relationLoaded('playlists')) {
+            return $albumTrack->playlists
+                ->pluck('id')
+                ->values()
+                ->all();
+        }
+
+        return $user->playlists()
+            ->whereHas('albumTracks', fn ($query) => $query->whereKey($albumTrack->id))
+            ->pluck('playlists.id')
+            ->values()
+            ->all();
     }
 
     private function artistName(?Track $track): ?string

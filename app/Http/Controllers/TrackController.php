@@ -15,6 +15,8 @@ class TrackController extends Controller
 {
     public function index(Request $request, AlbumTrackPayload $albumTrackPayload): Response
     {
+        $user = $request->user();
+
         $filters = [
             'search' => $request->string('search')->trim()->toString(),
             'genre_id' => $request->integer('genre_id') > 0 ? $request->integer('genre_id') : null,
@@ -24,7 +26,15 @@ class TrackController extends Controller
         ];
 
         $tracks = Track::query()
-            ->with(['album.library', 'albumTrack'])
+            ->with([
+                'album.library',
+                'albumTrack' => fn ($query) => $query->with([
+                    'album.library',
+                    'tracks' => fn ($query) => $query->orderBy('track_number')->orderBy('name'),
+                    'favoredByUsers' => fn ($query) => $query->whereKey($user->id),
+                    'playlists' => fn ($query) => $query->where('user_id', $user->id),
+                ]),
+            ])
             ->when($filters['search'] !== '', function ($query) use ($filters) {
                 $query->where(function ($query) use ($filters) {
                     $query
@@ -67,14 +77,14 @@ class TrackController extends Controller
                     'library' => $track->album->library?->name,
                 ] : null,
                 'album_track' => $track->albumTrack !== null
-                    ? $albumTrackPayload->make($track->albumTrack, $request->user())
+                    ? $albumTrackPayload->make($track->albumTrack, $user)
                     : null,
             ]);
 
         return Inertia::render('tracks/index', [
             'tracks' => $tracks,
             'filters' => $filters,
-            'playlists' => $request->user()
+            'playlists' => $user
                 ->playlists()
                 ->withCount('albumTracks')
                 ->latest()
