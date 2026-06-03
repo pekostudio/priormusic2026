@@ -47,10 +47,13 @@ jobs:
     steps:
       - name: Deploy to CloudPanel via SSH
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          PRODUCTION_ENV_BASE64: ${{ secrets.PRODUCTION_ENV_BASE64 }}
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          envs: PRODUCTION_ENV_BASE64
           script: |
             set -e
 
@@ -79,8 +82,13 @@ jobs:
               cp "$CURRENT_PATH/.env" "$SHARED_DIR/.env"
             fi
 
+            if [ ! -f "$SHARED_DIR/.env" ] && [ -n "${PRODUCTION_ENV_BASE64:-}" ]; then
+              printf '%s' "$PRODUCTION_ENV_BASE64" | base64 --decode > "$SHARED_DIR/.env"
+              chmod 600 "$SHARED_DIR/.env"
+            fi
+
             if [ ! -f "$SHARED_DIR/.env" ]; then
-              echo "Missing $SHARED_DIR/.env. Copy the production .env there before deploying."
+              echo "Missing $SHARED_DIR/.env. Copy the production .env there or add the PRODUCTION_ENV_BASE64 GitHub secret before deploying."
               exit 1
             fi
 
