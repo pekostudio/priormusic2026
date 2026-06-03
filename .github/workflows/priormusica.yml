@@ -47,59 +47,18 @@ jobs:
     steps:
       - name: Deploy to CloudPanel via SSH
         uses: appleboy/ssh-action@v1.0.3
-        env:
-          PRODUCTION_ENV_BASE64: ${{ secrets.PRODUCTION_ENV_BASE64 }}
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          envs: PRODUCTION_ENV_BASE64
           script: |
-            set -e
+            cd /home/priormusica-app/htdocs
 
-            BASE_DIR="/home/priormusica-app/htdocs"
-            APP_NAME="app.priormusica.lt"
-            CURRENT_PATH="$BASE_DIR/$APP_NAME"
-            RELEASES_DIR="$BASE_DIR/$APP_NAME-releases"
-            SHARED_DIR="$BASE_DIR/$APP_NAME-shared"
-            RELEASE_PATH="$RELEASES_DIR/${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}"
-            AUDIO_WAS_MOVED=false
+            rm -rf app.priormusica.lt
 
-            mkdir -p "$RELEASES_DIR" "$SHARED_DIR/public"
+            git clone https://github.com/pekostudio/priormusic2026.git app.priormusica.lt
 
-            if [ ! -e "$SHARED_DIR/public/audio" ] && [ -d "$CURRENT_PATH/public/audio" ]; then
-              mv "$CURRENT_PATH/public/audio" "$SHARED_DIR/public/audio"
-              AUDIO_WAS_MOVED=true
-            fi
-
-            mkdir -p "$SHARED_DIR/public/audio"
-
-            if [ "$AUDIO_WAS_MOVED" = true ]; then
-              ln -sfn "$SHARED_DIR/public/audio" "$CURRENT_PATH/public/audio"
-            fi
-
-            if [ ! -f "$SHARED_DIR/.env" ] && [ -f "$CURRENT_PATH/.env" ]; then
-              cp "$CURRENT_PATH/.env" "$SHARED_DIR/.env"
-            fi
-
-            if [ ! -f "$SHARED_DIR/.env" ] && [ -n "${PRODUCTION_ENV_BASE64:-}" ]; then
-              printf '%s' "$PRODUCTION_ENV_BASE64" | base64 --decode > "$SHARED_DIR/.env"
-              chmod 600 "$SHARED_DIR/.env"
-            fi
-
-            if [ ! -f "$SHARED_DIR/.env" ]; then
-              echo "Missing $SHARED_DIR/.env. Copy the production .env there or add the PRODUCTION_ENV_BASE64 GitHub secret before deploying."
-              exit 1
-            fi
-
-            rm -rf "$RELEASE_PATH"
-            git clone --depth 1 https://github.com/pekostudio/priormusic2026.git "$RELEASE_PATH"
-
-            cd "$RELEASE_PATH"
-
-            ln -sfn "$SHARED_DIR/.env" .env
-            rm -rf public/audio
-            ln -sfn "$SHARED_DIR/public/audio" public/audio
+            cd app.priormusica.lt
 
             composer install --no-dev --optimize-autoloader
 
@@ -112,9 +71,3 @@ jobs:
             php artisan route:cache
             php artisan view:cache
             php artisan queue:restart
-
-            if [ -d "$CURRENT_PATH" ] && [ ! -L "$CURRENT_PATH" ]; then
-              mv "$CURRENT_PATH" "$BASE_DIR/$APP_NAME.previous.$(date +%Y%m%d%H%M%S)"
-            fi
-
-            ln -sfn "$RELEASE_PATH" "$CURRENT_PATH"
