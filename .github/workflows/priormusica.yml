@@ -52,10 +52,12 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            set -eu
+
             cd /home/priormusica-app/htdocs
 
             if [ ! -d app.priormusica.lt/.git ]; then
-              git clone https://github.com/pekostudio/priormusic2026.git app.priormusica.lt
+              git clone git@github.com:pekostudio/priormusic2026.git app.priormusica.lt
             fi
 
             cd app.priormusica.lt

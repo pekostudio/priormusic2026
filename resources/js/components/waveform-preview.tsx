@@ -18,7 +18,11 @@ export function WaveformPreview({
     onSeek,
 }: WaveformPreviewProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [shouldLoadPeaks, setShouldLoadPeaks] = useState(false);
+    const [shouldLoadPeaks, setShouldLoadPeaks] = useState(
+        () =>
+            typeof window !== 'undefined' &&
+            !('IntersectionObserver' in window),
+    );
     const [peaks, setPeaks] = useState<number[]>([]);
 
     const seekFromPointer = useCallback(
@@ -90,8 +94,6 @@ export function WaveformPreview({
         }
 
         if (!('IntersectionObserver' in window)) {
-            setShouldLoadPeaks(true);
-
             return;
         }
 
