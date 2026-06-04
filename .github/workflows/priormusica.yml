@@ -54,6 +54,9 @@ jobs:
           script: |
             set -eu
 
+            mkdir -p ~/.ssh
+            ssh-keyscan github.com >> ~/.ssh/known_hosts
+
             cd /home/priormusica-app/htdocs
 
             if [ ! -d app.priormusica.lt/.git ]; then
