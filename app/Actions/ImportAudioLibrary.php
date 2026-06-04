@@ -6,6 +6,7 @@ use App\Models\Album;
 use App\Models\AlbumTrack;
 use App\Models\Library;
 use App\Models\Track;
+use App\Support\PublicAudio;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -96,6 +97,7 @@ class ImportAudioLibrary
 
                 $audioFileName = trim((string) ($row['TRACK: Audio Filename'] ?? ''));
                 $audioPath = $audioFileName !== '' ? ($audioFiles[strtolower($audioFileName)] ?? null) : null;
+                $relativeAudioPath = $audioPath !== null ? $this->toRelativeImportPath($audioPath, $basePath) : null;
                 $fileSize = $audioPath !== null && File::exists($audioPath) ? File::size($audioPath) : null;
 
                 $albumTrack = AlbumTrack::query()->updateOrCreate(
@@ -108,9 +110,9 @@ class ImportAudioLibrary
                         'file_name' => $audioFileName !== '' ? $audioFileName : ($audioPath !== null ? basename($audioPath) : $trackName.'.mp3'),
                         'file_size' => $fileSize,
                         'bucket' => null,
-                        'key' => $audioPath !== null ? $this->toRelativeImportPath($audioPath, $basePath) : null,
+                        'key' => $relativeAudioPath,
                         'download_token' => null,
-                        'local_file_path' => $audioPath !== null ? $this->toRelativeImportPath($audioPath, $basePath) : null,
+                        'local_file_path' => $relativeAudioPath,
                         'downloaded_at' => null,
                         'item_type' => 'track',
                     ],
@@ -217,7 +219,7 @@ class ImportAudioLibrary
         }
 
         if ($album === null) {
-            $album = new Album();
+            $album = new Album;
         }
 
         $album->fill([
@@ -335,7 +337,7 @@ class ImportAudioLibrary
                 ->first(static fn (\SplFileInfo $file): bool => strtolower($file->getFilename()) === strtolower($metadataArtwork));
 
             if ($exactMatch !== null) {
-                return $this->toBrowserPath($exactMatch->getPathname());
+                return PublicAudio::browserPath($exactMatch->getPathname());
             }
         }
 
@@ -347,29 +349,7 @@ class ImportAudioLibrary
                 return str_contains($filename, 'albumart') && in_array($extension, ['jpg', 'jpeg', 'png', 'webp'], true);
             });
 
-        return $fallback !== null ? $this->toBrowserPath($fallback->getPathname()) : null;
-    }
-
-    private function toBrowserPath(string $absolutePath): string
-    {
-        $publicRoot = rtrim(public_path(), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
-
-        if (str_starts_with($absolutePath, $publicRoot)) {
-            return Str::after($absolutePath, $publicRoot);
-        }
-
-        return $this->toProjectRelativePath($absolutePath);
-    }
-
-    private function toProjectRelativePath(string $absolutePath): string
-    {
-        $projectRoot = rtrim(base_path(), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
-
-        if (str_starts_with($absolutePath, $projectRoot)) {
-            return Str::after($absolutePath, $projectRoot);
-        }
-
-        return $absolutePath;
+        return $fallback !== null ? PublicAudio::browserPath($fallback->getPathname()) : null;
     }
 
     private function toRelativeImportPath(string $absolutePath, string $basePath): string

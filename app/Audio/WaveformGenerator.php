@@ -3,6 +3,7 @@
 namespace App\Audio;
 
 use App\Models\AlbumTrack;
+use App\Support\PublicAudio;
 use Illuminate\Support\Str;
 
 class WaveformGenerator
@@ -27,11 +28,7 @@ class WaveformGenerator
             return $path;
         }
 
-        $publicRoot = rtrim(public_path(), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
-
-        return str_starts_with($path, $publicRoot)
-            ? asset(Str::after($path, $publicRoot))
-            : null;
+        return PublicAudio::url($track->local_file_path ?: $track->key);
     }
 
     public function audioPath(AlbumTrack $track): ?string
@@ -46,23 +43,7 @@ class WaveformGenerator
             return $path;
         }
 
-        $publicRoot = rtrim(public_path(), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
-
-        if (str_starts_with($path, $publicRoot)) {
-            return $path;
-        }
-
-        $normalizedPath = ltrim($path, '/');
-
-        if (file_exists(public_path($normalizedPath))) {
-            return public_path($normalizedPath);
-        }
-
-        if (file_exists(public_path('audio/'.$normalizedPath))) {
-            return public_path('audio/'.$normalizedPath);
-        }
-
-        return null;
+        return PublicAudio::path($path);
     }
 
     /**

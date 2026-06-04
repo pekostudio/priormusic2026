@@ -39,19 +39,25 @@ class AlbumCoverThumbnail
             return $cover;
         }
 
-        $thumbnail = self::thumbnailBrowserPath($cover);
+        $browserPath = PublicAudio::browserPath($cover);
+
+        if ($browserPath === null) {
+            return null;
+        }
+
+        $thumbnail = self::thumbnailBrowserPath($browserPath);
 
         if ($thumbnail === null) {
-            return $cover;
+            return $browserPath;
         }
 
         if (! File::exists(public_path($thumbnail))) {
-            self::generate($cover);
+            self::generate($browserPath);
         }
 
         return File::exists(public_path($thumbnail))
             ? $thumbnail
-            : $cover;
+            : $browserPath;
     }
 
     public static function generate(?string $cover, bool $force = false): ?string
@@ -60,13 +66,19 @@ class AlbumCoverThumbnail
             return null;
         }
 
-        $sourcePath = public_path($cover);
+        $browserPath = PublicAudio::browserPath($cover);
 
-        if (! File::isFile($sourcePath)) {
+        if ($browserPath === null) {
             return null;
         }
 
-        $thumbnailBrowserPath = self::thumbnailBrowserPath($cover);
+        $sourcePath = PublicAudio::path($browserPath);
+
+        if ($sourcePath === null || ! File::isFile($sourcePath)) {
+            return null;
+        }
+
+        $thumbnailBrowserPath = self::thumbnailBrowserPath($browserPath);
 
         if ($thumbnailBrowserPath === null) {
             return null;
