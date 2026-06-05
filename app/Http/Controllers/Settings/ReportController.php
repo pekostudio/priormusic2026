@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -98,13 +99,26 @@ class ReportController extends Controller
     {
         abort_unless($musicUsageReport->user_id === $request->user()->id, 404);
 
-        Storage::disk('local')->delete($musicUsageReport->file_path);
+        $this->deleteReportFile($musicUsageReport);
 
         $musicUsageReport->delete();
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Report deleted.')]);
 
         return to_route('reports.index');
+    }
+
+    private function deleteReportFile(MusicUsageReport $report): void
+    {
+        collect([
+            $report->file_path,
+            Str::after($report->file_path, 'storage/app/private/'),
+            Str::after($report->file_path, 'app/private/'),
+            Str::after($report->file_path, 'private/'),
+        ])
+            ->filter(fn (string $path): bool => filled($path))
+            ->unique()
+            ->each(fn (string $path): bool => Storage::disk('local')->delete($path));
     }
 
     private function statsFor(mixed $events): array

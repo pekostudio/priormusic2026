@@ -312,20 +312,43 @@ export default function TracksIndex({
                                 return (
                                     <div
                                         key={track.id}
-                                        className="grid gap-2 px-4 py-2 md:grid-cols-[56px_1fr_auto] md:items-center"
+                                        className="grid gap-4 px-4 py-2 md:grid-cols-[64px_1fr_auto] md:items-center"
                                     >
-                                        <div className="size-12 overflow-hidden hover:cursor-pointer">
+                                        <div className="group relative size-16 overflow-hidden">
                                             {track.cover_url && (
-                                                <img
-                                                    src={track.cover_url}
-                                                    alt=""
-                                                    className="size-full object-cover"
-                                                    onClick={() =>
-                                                        toggleTrackPlayback(
-                                                            track,
-                                                        )
-                                                    }
-                                                />
+                                                <>
+                                                    <img
+                                                        src={track.cover_url}
+                                                        alt=""
+                                                        className="size-full object-cover hover:cursor-pointer"
+                                                    />
+                                                    {canPlay && (
+                                                        <button
+                                                            type="button"
+                                                            aria-label={
+                                                                isTrackPlaying
+                                                                    ? `Pause ${track.title}`
+                                                                    : `Play ${track.title}`
+                                                            }
+                                                            onClick={() =>
+                                                                toggleTrackPlayback(
+                                                                    track,
+                                                                )
+                                                            }
+                                                            className={`absolute bottom-1 left-1 flex size-8 items-center justify-center rounded-full bg-blue-500 text-white shadow-md ring-1 ring-white/20 transition-all duration-200 ease-out group-hover:translate-y-0 group-hover:opacity-100 hover:cursor-pointer hover:bg-blue-500 focus-visible:translate-y-0 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none ${
+                                                                isTrackPlaying
+                                                                    ? 'translate-y-0 opacity-100'
+                                                                    : 'translate-y-3 opacity-0'
+                                                            }`}
+                                                        >
+                                                            {isTrackPlaying ? (
+                                                                <Pause className="size-3.5" />
+                                                            ) : (
+                                                                <Play className="size-3.5 fill-current" />
+                                                            )}
+                                                        </button>
+                                                    )}
+                                                </>
                                             )}
                                         </div>
 

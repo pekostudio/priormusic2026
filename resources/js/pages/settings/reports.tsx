@@ -315,9 +315,15 @@ function deleteReport(report: UsageReport) {
         return;
     }
 
-    router.delete(ReportController.destroy.url(report.id), {
-        preserveScroll: true,
-    });
+    router.post(
+        ReportController.destroy.url(report.id),
+        {
+            _method: 'DELETE',
+        },
+        {
+            preserveScroll: true,
+        },
+    );
 }
 
 function formatDuration(seconds: number) {

@@ -1,7 +1,7 @@
-import { Check, ChevronDown, LoaderCircle } from 'lucide-react';
+import { ActionIcon } from '@mantine/core';
+import { Check, ListPlus } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -83,23 +83,37 @@ export function AddToPlaylistButton({
         return null;
     }
 
+    const selectedPlaylistCount = selectedPlaylistIds.size;
+    const isInPlaylist = selectedPlaylistCount > 0;
+    const playlistStatusLabel = isInPlaylist
+        ? `${label} is in ${selectedPlaylistCount} ${
+              selectedPlaylistCount === 1 ? 'playlist' : 'playlists'
+          }. Add to playlist`
+        : `Add ${label} to playlist`;
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button
+                <ActionIcon
                     type="button"
-                    variant="outline"
+                    variant={isInPlaylist ? 'light' : 'default'}
+                    color={isInPlaylist ? 'green' : undefined}
+                    size={36}
+                    radius="md"
                     disabled={isSaving}
-                    aria-label={`Add ${label} to playlist`}
-                    className="min-w-36 justify-between"
+                    aria-label={playlistStatusLabel}
+                    title={playlistStatusLabel}
+                    className="relative overflow-visible bg-yellow-100"
+                    loading={isSaving}
+                    loaderProps={{ size: 16 }}
                 >
-                    <span>Add to playlist</span>
-                    {isSaving ? (
-                        <LoaderCircle className="size-4 animate-spin" />
-                    ) : (
-                        <ChevronDown className="size-4" />
+                    <ListPlus className="size-4" />
+                    {selectedPlaylistCount > 1 && (
+                        <span className="absolute top-0.5 right-0.5 flex min-h-3 min-w-3 items-center justify-center rounded-full bg-green-600 px-1 text-[8px] leading-none font-semibold text-white shadow-sm">
+                            {selectedPlaylistCount}
+                        </span>
                     )}
-                </Button>
+                </ActionIcon>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel>Choose playlist</DropdownMenuLabel>

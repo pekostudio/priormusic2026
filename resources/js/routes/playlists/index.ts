@@ -142,7 +142,7 @@ store.form = storeForm
 * @see app/Http/Controllers/PlaylistController.php:52
 * @route '/playlists/{playlist}'
 */
-export const show = (args: { playlist: string | number | { id: string | number } } | [playlist: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { playlist: number | { id: number } } | [playlist: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -157,7 +157,7 @@ show.definition = {
 * @see app/Http/Controllers/PlaylistController.php:52
 * @route '/playlists/{playlist}'
 */
-show.url = (args: { playlist: string | number | { id: string | number } } | [playlist: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+show.url = (args: { playlist: number | { id: number } } | [playlist: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { playlist: args }
     }
@@ -190,7 +190,7 @@ show.url = (args: { playlist: string | number | { id: string | number } } | [pla
 * @see app/Http/Controllers/PlaylistController.php:52
 * @route '/playlists/{playlist}'
 */
-show.get = (args: { playlist: string | number | { id: string | number } } | [playlist: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { playlist: number | { id: number } } | [playlist: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -200,7 +200,7 @@ show.get = (args: { playlist: string | number | { id: string | number } } | [pla
 * @see app/Http/Controllers/PlaylistController.php:52
 * @route '/playlists/{playlist}'
 */
-show.head = (args: { playlist: string | number | { id: string | number } } | [playlist: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { playlist: number | { id: number } } | [playlist: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -210,7 +210,7 @@ show.head = (args: { playlist: string | number | { id: string | number } } | [pl
 * @see app/Http/Controllers/PlaylistController.php:52
 * @route '/playlists/{playlist}'
 */
-const showForm = (args: { playlist: string | number | { id: string | number } } | [playlist: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+const showForm = (args: { playlist: number | { id: number } } | [playlist: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, options),
     method: 'get',
 })
@@ -220,7 +220,7 @@ const showForm = (args: { playlist: string | number | { id: string | number } } 
 * @see app/Http/Controllers/PlaylistController.php:52
 * @route '/playlists/{playlist}'
 */
-showForm.get = (args: { playlist: string | number | { id: string | number } } | [playlist: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+showForm.get = (args: { playlist: number | { id: number } } | [playlist: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, options),
     method: 'get',
 })
@@ -230,7 +230,7 @@ showForm.get = (args: { playlist: string | number | { id: string | number } } | 
 * @see app/Http/Controllers/PlaylistController.php:52
 * @route '/playlists/{playlist}'
 */
-showForm.head = (args: { playlist: string | number | { id: string | number } } | [playlist: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+showForm.head = (args: { playlist: number | { id: number } } | [playlist: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',
@@ -247,7 +247,7 @@ show.form = showForm
 * @see app/Http/Controllers/PlaylistController.php:81
 * @route '/playlists/{playlist}'
 */
-export const destroy = (args: { playlist: string | number | { id: string | number } } | [playlist: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { playlist: number | { id: number } } | [playlist: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -262,7 +262,7 @@ destroy.definition = {
 * @see app/Http/Controllers/PlaylistController.php:81
 * @route '/playlists/{playlist}'
 */
-destroy.url = (args: { playlist: string | number | { id: string | number } } | [playlist: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { playlist: number | { id: number } } | [playlist: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { playlist: args }
     }
@@ -295,7 +295,7 @@ destroy.url = (args: { playlist: string | number | { id: string | number } } | [
 * @see app/Http/Controllers/PlaylistController.php:81
 * @route '/playlists/{playlist}'
 */
-destroy.delete = (args: { playlist: string | number | { id: string | number } } | [playlist: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { playlist: number | { id: number } } | [playlist: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -305,7 +305,7 @@ destroy.delete = (args: { playlist: string | number | { id: string | number } } 
 * @see app/Http/Controllers/PlaylistController.php:81
 * @route '/playlists/{playlist}'
 */
-const destroyForm = (args: { playlist: string | number | { id: string | number } } | [playlist: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const destroyForm = (args: { playlist: number | { id: number } } | [playlist: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: destroy.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',
@@ -320,7 +320,7 @@ const destroyForm = (args: { playlist: string | number | { id: string | number }
 * @see app/Http/Controllers/PlaylistController.php:81
 * @route '/playlists/{playlist}'
 */
-destroyForm.delete = (args: { playlist: string | number | { id: string | number } } | [playlist: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+destroyForm.delete = (args: { playlist: number | { id: number } } | [playlist: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: destroy.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',

@@ -141,6 +141,27 @@ test('usage reports can be deleted by their owner', function () {
     Storage::disk('local')->assertMissing('reports/deletable.pdf');
 });
 
+test('usage reports can be deleted through a spoofed post request', function () {
+    Storage::fake('local');
+    Storage::disk('local')->put('reports/spoofed.pdf', '%PDF-1.4');
+
+    $user = User::factory()->create();
+    $report = MusicUsageReport::factory()->for($user)->create([
+        'file_path' => 'reports/spoofed.pdf',
+    ]);
+
+    $this
+        ->actingAs($user)
+        ->post(route('reports.destroy', $report), [
+            '_method' => 'DELETE',
+        ])
+        ->assertRedirect(route('reports.index'));
+
+    expect($report->fresh())->toBeNull();
+
+    Storage::disk('local')->assertMissing('reports/spoofed.pdf');
+});
+
 test('users cannot download another users report', function () {
     Storage::fake('local');
     Storage::disk('local')->put('reports/private.pdf', '%PDF-1.4');

@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\Settings\ReportController::index
-* @see app/Http/Controllers/Settings/ReportController.php:23
+* @see app/Http/Controllers/Settings/ReportController.php:24
 * @route '/settings/reports'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Settings\ReportController::index
-* @see app/Http/Controllers/Settings/ReportController.php:23
+* @see app/Http/Controllers/Settings/ReportController.php:24
 * @route '/settings/reports'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Settings\ReportController::index
-* @see app/Http/Controllers/Settings/ReportController.php:23
+* @see app/Http/Controllers/Settings/ReportController.php:24
 * @route '/settings/reports'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Settings\ReportController::index
-* @see app/Http/Controllers/Settings/ReportController.php:23
+* @see app/Http/Controllers/Settings/ReportController.php:24
 * @route '/settings/reports'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Settings\ReportController::index
-* @see app/Http/Controllers/Settings/ReportController.php:23
+* @see app/Http/Controllers/Settings/ReportController.php:24
 * @route '/settings/reports'
 */
 const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 /**
 * @see \App\Http\Controllers\Settings\ReportController::index
-* @see app/Http/Controllers/Settings/ReportController.php:23
+* @see app/Http/Controllers/Settings/ReportController.php:24
 * @route '/settings/reports'
 */
 indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Settings\ReportController::index
-* @see app/Http/Controllers/Settings/ReportController.php:23
+* @see app/Http/Controllers/Settings/ReportController.php:24
 * @route '/settings/reports'
 */
 indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\Settings\ReportController::store
-* @see app/Http/Controllers/Settings/ReportController.php:48
+* @see app/Http/Controllers/Settings/ReportController.php:49
 * @route '/settings/reports'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -97,7 +97,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Settings\ReportController::store
-* @see app/Http/Controllers/Settings/ReportController.php:48
+* @see app/Http/Controllers/Settings/ReportController.php:49
 * @route '/settings/reports'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -106,7 +106,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Settings\ReportController::store
-* @see app/Http/Controllers/Settings/ReportController.php:48
+* @see app/Http/Controllers/Settings/ReportController.php:49
 * @route '/settings/reports'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -116,7 +116,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Settings\ReportController::store
-* @see app/Http/Controllers/Settings/ReportController.php:48
+* @see app/Http/Controllers/Settings/ReportController.php:49
 * @route '/settings/reports'
 */
 const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -126,7 +126,7 @@ const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => 
 
 /**
 * @see \App\Http\Controllers\Settings\ReportController::store
-* @see app/Http/Controllers/Settings/ReportController.php:48
+* @see app/Http/Controllers/Settings/ReportController.php:49
 * @route '/settings/reports'
 */
 storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -138,10 +138,10 @@ store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\Settings\ReportController::download
-* @see app/Http/Controllers/Settings/ReportController.php:85
+* @see app/Http/Controllers/Settings/ReportController.php:86
 * @route '/settings/reports/{musicUsageReport}/download'
 */
-export const download = (args: { musicUsageReport: string | number | { id: string | number } } | [musicUsageReport: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const download = (args: { musicUsageReport: number | { id: number } } | [musicUsageReport: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: download.url(args, options),
     method: 'get',
 })
@@ -153,10 +153,10 @@ download.definition = {
 
 /**
 * @see \App\Http\Controllers\Settings\ReportController::download
-* @see app/Http/Controllers/Settings/ReportController.php:85
+* @see app/Http/Controllers/Settings/ReportController.php:86
 * @route '/settings/reports/{musicUsageReport}/download'
 */
-download.url = (args: { musicUsageReport: string | number | { id: string | number } } | [musicUsageReport: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+download.url = (args: { musicUsageReport: number | { id: number } } | [musicUsageReport: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { musicUsageReport: args }
     }
@@ -186,50 +186,50 @@ download.url = (args: { musicUsageReport: string | number | { id: string | numbe
 
 /**
 * @see \App\Http\Controllers\Settings\ReportController::download
-* @see app/Http/Controllers/Settings/ReportController.php:85
+* @see app/Http/Controllers/Settings/ReportController.php:86
 * @route '/settings/reports/{musicUsageReport}/download'
 */
-download.get = (args: { musicUsageReport: string | number | { id: string | number } } | [musicUsageReport: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+download.get = (args: { musicUsageReport: number | { id: number } } | [musicUsageReport: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: download.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\Settings\ReportController::download
-* @see app/Http/Controllers/Settings/ReportController.php:85
+* @see app/Http/Controllers/Settings/ReportController.php:86
 * @route '/settings/reports/{musicUsageReport}/download'
 */
-download.head = (args: { musicUsageReport: string | number | { id: string | number } } | [musicUsageReport: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+download.head = (args: { musicUsageReport: number | { id: number } } | [musicUsageReport: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: download.url(args, options),
     method: 'head',
 })
 
 /**
 * @see \App\Http\Controllers\Settings\ReportController::download
-* @see app/Http/Controllers/Settings/ReportController.php:85
+* @see app/Http/Controllers/Settings/ReportController.php:86
 * @route '/settings/reports/{musicUsageReport}/download'
 */
-const downloadForm = (args: { musicUsageReport: string | number | { id: string | number } } | [musicUsageReport: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+const downloadForm = (args: { musicUsageReport: number | { id: number } } | [musicUsageReport: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: download.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\Settings\ReportController::download
-* @see app/Http/Controllers/Settings/ReportController.php:85
+* @see app/Http/Controllers/Settings/ReportController.php:86
 * @route '/settings/reports/{musicUsageReport}/download'
 */
-downloadForm.get = (args: { musicUsageReport: string | number | { id: string | number } } | [musicUsageReport: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+downloadForm.get = (args: { musicUsageReport: number | { id: number } } | [musicUsageReport: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: download.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\Settings\ReportController::download
-* @see app/Http/Controllers/Settings/ReportController.php:85
+* @see app/Http/Controllers/Settings/ReportController.php:86
 * @route '/settings/reports/{musicUsageReport}/download'
 */
-downloadForm.head = (args: { musicUsageReport: string | number | { id: string | number } } | [musicUsageReport: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+downloadForm.head = (args: { musicUsageReport: number | { id: number } } | [musicUsageReport: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: download.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',
@@ -243,10 +243,10 @@ download.form = downloadForm
 
 /**
 * @see \App\Http\Controllers\Settings\ReportController::destroy
-* @see app/Http/Controllers/Settings/ReportController.php:97
+* @see app/Http/Controllers/Settings/ReportController.php:98
 * @route '/settings/reports/{musicUsageReport}'
 */
-export const destroy = (args: { musicUsageReport: string | number | { id: string | number } } | [musicUsageReport: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { musicUsageReport: number | { id: number } } | [musicUsageReport: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -258,10 +258,10 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Settings\ReportController::destroy
-* @see app/Http/Controllers/Settings/ReportController.php:97
+* @see app/Http/Controllers/Settings/ReportController.php:98
 * @route '/settings/reports/{musicUsageReport}'
 */
-destroy.url = (args: { musicUsageReport: string | number | { id: string | number } } | [musicUsageReport: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { musicUsageReport: number | { id: number } } | [musicUsageReport: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { musicUsageReport: args }
     }
@@ -291,20 +291,20 @@ destroy.url = (args: { musicUsageReport: string | number | { id: string | number
 
 /**
 * @see \App\Http\Controllers\Settings\ReportController::destroy
-* @see app/Http/Controllers/Settings/ReportController.php:97
+* @see app/Http/Controllers/Settings/ReportController.php:98
 * @route '/settings/reports/{musicUsageReport}'
 */
-destroy.delete = (args: { musicUsageReport: string | number | { id: string | number } } | [musicUsageReport: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { musicUsageReport: number | { id: number } } | [musicUsageReport: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
 
 /**
 * @see \App\Http\Controllers\Settings\ReportController::destroy
-* @see app/Http/Controllers/Settings/ReportController.php:97
+* @see app/Http/Controllers/Settings/ReportController.php:98
 * @route '/settings/reports/{musicUsageReport}'
 */
-const destroyForm = (args: { musicUsageReport: string | number | { id: string | number } } | [musicUsageReport: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const destroyForm = (args: { musicUsageReport: number | { id: number } } | [musicUsageReport: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: destroy.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',
@@ -316,10 +316,10 @@ const destroyForm = (args: { musicUsageReport: string | number | { id: string | 
 
 /**
 * @see \App\Http\Controllers\Settings\ReportController::destroy
-* @see app/Http/Controllers/Settings/ReportController.php:97
+* @see app/Http/Controllers/Settings/ReportController.php:98
 * @route '/settings/reports/{musicUsageReport}'
 */
-destroyForm.delete = (args: { musicUsageReport: string | number | { id: string | number } } | [musicUsageReport: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+destroyForm.delete = (args: { musicUsageReport: number | { id: number } } | [musicUsageReport: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: destroy.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',

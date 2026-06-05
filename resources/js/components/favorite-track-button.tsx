@@ -61,6 +61,7 @@ export function FavoriteTrackButton({
 
     return (
         <Button
+            className="hover:cursor-pointer"
             type="button"
             variant="outline"
             size="icon"
@@ -75,7 +76,7 @@ export function FavoriteTrackButton({
             <Heart
                 className={
                     favorite
-                        ? 'size-4 fill-red-500 text-red-500'
+                        ? 'size-4 fill-blue-400 text-blue-400'
                         : 'size-4 text-muted-foreground'
                 }
             />

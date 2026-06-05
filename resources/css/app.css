@@ -140,4 +140,8 @@
     body {
         @apply bg-background text-foreground;
     }
+
+    .rhap_main-controls-button {
+        color: #2C7FFF !important;
+    }
 }
