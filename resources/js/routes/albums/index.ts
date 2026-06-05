@@ -85,7 +85,7 @@ index.form = indexForm
 * @see app/Http/Controllers/AlbumController.php:96
 * @route '/albums/{album}'
 */
-export const show = (args: { album: number | { id: number } } | [album: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { album: string | number | { id: string | number } } | [album: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -100,7 +100,7 @@ show.definition = {
 * @see app/Http/Controllers/AlbumController.php:96
 * @route '/albums/{album}'
 */
-show.url = (args: { album: number | { id: number } } | [album: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+show.url = (args: { album: string | number | { id: string | number } } | [album: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { album: args }
     }
@@ -133,7 +133,7 @@ show.url = (args: { album: number | { id: number } } | [album: number | { id: nu
 * @see app/Http/Controllers/AlbumController.php:96
 * @route '/albums/{album}'
 */
-show.get = (args: { album: number | { id: number } } | [album: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { album: string | number | { id: string | number } } | [album: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -143,7 +143,7 @@ show.get = (args: { album: number | { id: number } } | [album: number | { id: nu
 * @see app/Http/Controllers/AlbumController.php:96
 * @route '/albums/{album}'
 */
-show.head = (args: { album: number | { id: number } } | [album: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { album: string | number | { id: string | number } } | [album: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -153,7 +153,7 @@ show.head = (args: { album: number | { id: number } } | [album: number | { id: n
 * @see app/Http/Controllers/AlbumController.php:96
 * @route '/albums/{album}'
 */
-const showForm = (args: { album: number | { id: number } } | [album: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+const showForm = (args: { album: string | number | { id: string | number } } | [album: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, options),
     method: 'get',
 })
@@ -163,7 +163,7 @@ const showForm = (args: { album: number | { id: number } } | [album: number | { 
 * @see app/Http/Controllers/AlbumController.php:96
 * @route '/albums/{album}'
 */
-showForm.get = (args: { album: number | { id: number } } | [album: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+showForm.get = (args: { album: string | number | { id: string | number } } | [album: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, options),
     method: 'get',
 })
@@ -173,7 +173,7 @@ showForm.get = (args: { album: number | { id: number } } | [album: number | { id
 * @see app/Http/Controllers/AlbumController.php:96
 * @route '/albums/{album}'
 */
-showForm.head = (args: { album: number | { id: number } } | [album: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+showForm.head = (args: { album: string | number | { id: string | number } } | [album: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',

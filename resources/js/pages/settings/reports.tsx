@@ -1,8 +1,9 @@
-import { Form, Head } from '@inertiajs/react';
-import { Download, FileText } from 'lucide-react';
+import { Form, Head, router } from '@inertiajs/react';
+import { Download, FileText, Trash2 } from 'lucide-react';
 import ReportController from '@/actions/App/Http/Controllers/Settings/ReportController';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
+import { Pagination } from '@/components/pagination';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -21,6 +22,20 @@ type UsageEvent = {
     album_title: string | null;
     duration_seconds: number | null;
     occurred_at: string;
+};
+
+type PaginationLink = {
+    url: string | null;
+    label: string;
+    active: boolean;
+};
+
+type Paginated<T> = {
+    data: T[];
+    links: PaginationLink[];
+    from: number | null;
+    to: number | null;
+    total: number;
 };
 
 type UsageReport = {
@@ -46,7 +61,7 @@ export default function Reports({
     defaultRange,
 }: {
     stats: Stats;
-    recentEvents: UsageEvent[];
+    recentEvents: Paginated<UsageEvent>;
     reports: UsageReport[];
     defaultRange: DefaultRange;
 }) {
@@ -142,7 +157,7 @@ function StatBlock({ label, value }: { label: string; value: number | string }) 
     );
 }
 
-function ActivityTable({ events }: { events: UsageEvent[] }) {
+function ActivityTable({ events }: { events: Paginated<UsageEvent> }) {
     return (
         <section className="space-y-4">
             <Heading
@@ -163,7 +178,7 @@ function ActivityTable({ events }: { events: UsageEvent[] }) {
                         </tr>
                     </thead>
                     <tbody className="divide-y">
-                        {events.map((event) => (
+                        {events.data.map((event) => (
                             <tr key={event.id}>
                                 <td className="px-4 py-3 whitespace-nowrap">
                                     {formatDate(event.occurred_at)}
@@ -187,7 +202,7 @@ function ActivityTable({ events }: { events: UsageEvent[] }) {
                             </tr>
                         ))}
 
-                        {events.length === 0 && (
+                        {events.data.length === 0 && (
                             <tr>
                                 <td
                                     colSpan={5}
@@ -199,6 +214,15 @@ function ActivityTable({ events }: { events: UsageEvent[] }) {
                         )}
                     </tbody>
                 </table>
+            </div>
+
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-sm text-muted-foreground">
+                    {events.total === 0
+                        ? 'No activity'
+                        : `Showing ${events.from} to ${events.to} of ${events.total}`}
+                </p>
+                <Pagination links={events.links} />
             </div>
         </section>
     );
@@ -224,7 +248,7 @@ function ReportsTable({ reports }: { reports: UsageReport[] }) {
                             </th>
                             <th className="px-4 py-3 font-medium">Generated</th>
                             <th className="px-4 py-3 text-right font-medium">
-                                PDF
+                                Actions
                             </th>
                         </tr>
                     </thead>
@@ -243,17 +267,28 @@ function ReportsTable({ reports }: { reports: UsageReport[] }) {
                                 <td className="px-4 py-3 whitespace-nowrap">
                                     {formatDate(report.created_at)}
                                 </td>
-                                <td className="px-4 py-3 text-right">
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        asChild
-                                        aria-label="Download report"
-                                    >
-                                        <a href={report.download_url}>
-                                            <Download className="h-4 w-4" />
-                                        </a>
-                                    </Button>
+                                <td className="px-4 py-3">
+                                    <div className="flex justify-end gap-1">
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            asChild
+                                            aria-label="Download report"
+                                        >
+                                            <a href={report.download_url}>
+                                                <Download className="h-4 w-4" />
+                                            </a>
+                                        </Button>
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="icon"
+                                            aria-label="Delete report"
+                                            onClick={() => deleteReport(report)}
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    </div>
                                 </td>
                             </tr>
                         ))}
@@ -273,6 +308,16 @@ function ReportsTable({ reports }: { reports: UsageReport[] }) {
             </div>
         </section>
     );
+}
+
+function deleteReport(report: UsageReport) {
+    if (!window.confirm('Delete this report?')) {
+        return;
+    }
+
+    router.delete(ReportController.destroy.url(report.id), {
+        preserveScroll: true,
+    });
 }
 
 function formatDuration(seconds: number) {

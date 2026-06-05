@@ -4,7 +4,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 * @see app/Http/Controllers/PlaylistTrackController.php:24
 * @route '/playlists/{playlist}/tracks/{albumTrack}'
 */
-export const destroy = (args: { playlist: number | { id: number }, albumTrack: number | { id: number } } | [playlist: number | { id: number }, albumTrack: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { playlist: string | number | { id: string | number }, albumTrack: string | number | { id: string | number } } | [playlist: string | number | { id: string | number }, albumTrack: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -19,7 +19,7 @@ destroy.definition = {
 * @see app/Http/Controllers/PlaylistTrackController.php:24
 * @route '/playlists/{playlist}/tracks/{albumTrack}'
 */
-destroy.url = (args: { playlist: number | { id: number }, albumTrack: number | { id: number } } | [playlist: number | { id: number }, albumTrack: number | { id: number } ], options?: RouteQueryOptions) => {
+destroy.url = (args: { playlist: string | number | { id: string | number }, albumTrack: string | number | { id: string | number } } | [playlist: string | number | { id: string | number }, albumTrack: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             playlist: args[0],
@@ -49,7 +49,7 @@ destroy.url = (args: { playlist: number | { id: number }, albumTrack: number | {
 * @see app/Http/Controllers/PlaylistTrackController.php:24
 * @route '/playlists/{playlist}/tracks/{albumTrack}'
 */
-destroy.delete = (args: { playlist: number | { id: number }, albumTrack: number | { id: number } } | [playlist: number | { id: number }, albumTrack: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { playlist: string | number | { id: string | number }, albumTrack: string | number | { id: string | number } } | [playlist: string | number | { id: string | number }, albumTrack: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -59,7 +59,7 @@ destroy.delete = (args: { playlist: number | { id: number }, albumTrack: number 
 * @see app/Http/Controllers/PlaylistTrackController.php:24
 * @route '/playlists/{playlist}/tracks/{albumTrack}'
 */
-const destroyForm = (args: { playlist: number | { id: number }, albumTrack: number | { id: number } } | [playlist: number | { id: number }, albumTrack: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const destroyForm = (args: { playlist: string | number | { id: string | number }, albumTrack: string | number | { id: string | number } } | [playlist: string | number | { id: string | number }, albumTrack: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: destroy.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',
@@ -74,7 +74,7 @@ const destroyForm = (args: { playlist: number | { id: number }, albumTrack: numb
 * @see app/Http/Controllers/PlaylistTrackController.php:24
 * @route '/playlists/{playlist}/tracks/{albumTrack}'
 */
-destroyForm.delete = (args: { playlist: number | { id: number }, albumTrack: number | { id: number } } | [playlist: number | { id: number }, albumTrack: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+destroyForm.delete = (args: { playlist: string | number | { id: string | number }, albumTrack: string | number | { id: string | number } } | [playlist: string | number | { id: string | number }, albumTrack: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: destroy.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',

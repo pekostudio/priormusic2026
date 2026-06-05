@@ -4,12 +4,15 @@ namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ReportGenerateRequest;
+use App\Models\AlbumTrack;
 use App\Models\MusicUsageEvent;
 use App\Models\MusicUsageReport;
+use App\Models\Track;
 use App\Support\SimplePdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -21,10 +24,15 @@ class ReportController extends Controller
     {
         $user = $request->user();
         $events = $user->musicUsageEvents()->latest('occurred_at')->get();
+        $recentEvents = $user->musicUsageEvents()
+            ->latest('occurred_at')
+            ->paginate(20, ['*'], 'activity_page')
+            ->withQueryString()
+            ->through(fn (MusicUsageEvent $event): array => $this->eventPayload($event));
 
         return Inertia::render('settings/reports', [
             'stats' => $this->statsFor($events),
-            'recentEvents' => $events->take(25)->map(fn (MusicUsageEvent $event): array => $this->eventPayload($event)),
+            'recentEvents' => $recentEvents,
             'reports' => $user->musicUsageReports()
                 ->latest()
                 ->limit(20)
@@ -44,6 +52,7 @@ class ReportController extends Controller
         $startsAt = Carbon::parse($validated['starts_at'])->startOfDay();
         $endsAt = Carbon::parse($validated['ends_at'])->endOfDay();
         $events = $user->musicUsageEvents()
+            ->with(['albumTrack.album', 'albumTrack.tracks'])
             ->whereBetween('occurred_at', [$startsAt, $endsAt])
             ->orderBy('occurred_at')
             ->get();
@@ -60,7 +69,11 @@ class ReportController extends Controller
 
         $filePath = "reports/music-usage-report-{$report->id}.pdf";
 
-        Storage::disk('local')->put($filePath, SimplePdf::make($this->reportLines($report, $events)));
+        Storage::disk('local')->put($filePath, SimplePdf::makeLithuanianUsageReport(
+            $this->periodLabel($startsAt, $endsAt),
+            $this->reportRows($events),
+            $user->contact_person ?: $user->name,
+        ));
 
         $report->update(['file_path' => $filePath]);
 
@@ -79,6 +92,19 @@ class ReportController extends Controller
             "music-usage-report-{$musicUsageReport->starts_at->toDateString()}-{$musicUsageReport->ends_at->toDateString()}.pdf",
             ['Content-Type' => 'application/pdf']
         );
+    }
+
+    public function destroy(MusicUsageReport $musicUsageReport, Request $request): RedirectResponse
+    {
+        abort_unless($musicUsageReport->user_id === $request->user()->id, 404);
+
+        Storage::disk('local')->delete($musicUsageReport->file_path);
+
+        $musicUsageReport->delete();
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('Report deleted.')]);
+
+        return to_route('reports.index');
     }
 
     private function statsFor(mixed $events): array
@@ -116,24 +142,94 @@ class ReportController extends Controller
         ];
     }
 
-    private function reportLines(MusicUsageReport $report, mixed $events): array
+    /**
+     * @param  Collection<int, MusicUsageEvent>  $events
+     * @return list<array<string, string|int>>
+     */
+    private function reportRows(Collection $events): array
     {
-        return [
-            'Music usage report',
-            "Period: {$report->starts_at->toFormattedDateString()} - {$report->ends_at->toFormattedDateString()}",
-            "Listened: {$report->listened_count}",
-            "Downloaded: {$report->downloaded_count}",
-            'Listening time: '.$this->formatDuration($report->duration_seconds),
-            '',
-            'Date | Type | Track | Album | Duration',
-            ...$events->map(fn (MusicUsageEvent $event): string => implode(' | ', [
-                $event->occurred_at->toDateString(),
-                ucfirst($event->event_type),
-                $event->track_title ?: 'Untitled track',
-                $event->album_title ?: 'Untitled album',
-                $event->duration_seconds === null ? '-' : $this->formatDuration($event->duration_seconds),
-            ]))->all(),
-        ];
+        return $events
+            ->groupBy(fn (MusicUsageEvent $event): string => implode('|', [
+                $event->track_title,
+                $event->album_title,
+                $event->album_track_id,
+                $this->metadataValue($event, ['usage_type', 'usageType', 'naudojimo_budas']),
+            ]))
+            ->values()
+            ->map(function (Collection $events, int $index): array {
+                /** @var MusicUsageEvent $event */
+                $event = $events->first();
+                $albumTrack = $event->albumTrack;
+                $track = $this->trackFor($albumTrack, $event);
+                $duration = (int) $events->sum(fn (MusicUsageEvent $usageEvent): int => (int) $usageEvent->duration_seconds);
+
+                return [
+                    'number' => $index + 1,
+                    'title' => $event->track_title ?: $albumTrack?->name ?: $track?->display_title ?: $track?->name ?: '-',
+                    'soloists' => $this->metadataValue($event, ['soloists', 'soloistai']) ?: '-',
+                    'performers' => $this->metadataValue($event, ['performers', 'performer', 'artists', 'artist', 'atlikejai']) ?: '-',
+                    'music_authors' => $this->metadataValue($event, ['music_authors', 'musicAuthor', 'composer', 'authors', 'author'])
+                        ?: $track?->composer
+                        ?: '-',
+                    'text_authors' => $this->metadataValue($event, ['text_authors', 'textAuthor', 'lyrics_author', 'lyricist']) ?: '-',
+                    'album' => $this->metadataValue($event, ['album_code', 'catalog', 'catalog_number', 'cd_code'])
+                        ?: $track?->cd_code
+                        ?: $albumTrack?->album?->code
+                        ?: $event->album_title
+                        ?: '-',
+                    'label' => $this->metadataValue($event, ['label', 'producer', 'publisher', 'gamintojas'])
+                        ?: $track?->publisher
+                        ?: '-',
+                    'minutes' => $duration > 0 ? intdiv($duration, 60) : '',
+                    'seconds' => $duration > 0 ? $duration % 60 : '',
+                    'broadcast_count' => $this->metadataValue($event, ['broadcast_count', 'repeat_count', 'transliavimu_skaicius'])
+                        ?: $events->count(),
+                    'usage_type' => $this->metadataValue($event, ['usage_type', 'usageType', 'naudojimo_budas']) ?: 'foninė',
+                ];
+            })
+            ->all();
+    }
+
+    private function trackFor(?AlbumTrack $albumTrack, MusicUsageEvent $event): ?Track
+    {
+        if ($albumTrack === null) {
+            return null;
+        }
+
+        return $albumTrack->tracks
+            ->first(fn (Track $track): bool => $track->name === $event->track_title || $track->display_title === $event->track_title)
+            ?: $albumTrack->tracks->first();
+    }
+
+    /**
+     * @param  list<string>  $keys
+     */
+    private function metadataValue(MusicUsageEvent $event, array $keys): ?string
+    {
+        $metadata = $event->metadata ?? [];
+
+        foreach ($keys as $key) {
+            $value = data_get($metadata, $key) ?? data_get($event->albumTrack?->album?->source_metadata ?? [], $key);
+
+            if (is_array($value)) {
+                $value = implode('/', array_filter($value, fn (mixed $item): bool => filled($item)));
+            }
+
+            if (filled($value)) {
+                return (string) $value;
+            }
+        }
+
+        return null;
+    }
+
+    private function periodLabel(Carbon $startsAt, Carbon $endsAt): string
+    {
+        if ($startsAt->isSameMonth($endsAt)) {
+            return $startsAt->format('Y').' m. '.$startsAt->format('m').' mėn.';
+        }
+
+        return $startsAt->toDateString().' - '.$endsAt->toDateString();
     }
 
     private function formatDuration(int $seconds): string

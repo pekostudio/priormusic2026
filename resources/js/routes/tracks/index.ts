@@ -7,7 +7,7 @@ import playlists from './playlists'
 * @see app/Http/Controllers/TrackDownloadController.php:15
 * @route '/tracks/{albumTrack}/download'
 */
-export const download = (args: { albumTrack: number | { id: number } } | [albumTrack: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const download = (args: { albumTrack: string | number | { id: string | number } } | [albumTrack: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: download.url(args, options),
     method: 'get',
 })
@@ -22,7 +22,7 @@ download.definition = {
 * @see app/Http/Controllers/TrackDownloadController.php:15
 * @route '/tracks/{albumTrack}/download'
 */
-download.url = (args: { albumTrack: number | { id: number } } | [albumTrack: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+download.url = (args: { albumTrack: string | number | { id: string | number } } | [albumTrack: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { albumTrack: args }
     }
@@ -55,7 +55,7 @@ download.url = (args: { albumTrack: number | { id: number } } | [albumTrack: num
 * @see app/Http/Controllers/TrackDownloadController.php:15
 * @route '/tracks/{albumTrack}/download'
 */
-download.get = (args: { albumTrack: number | { id: number } } | [albumTrack: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+download.get = (args: { albumTrack: string | number | { id: string | number } } | [albumTrack: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: download.url(args, options),
     method: 'get',
 })
@@ -65,7 +65,7 @@ download.get = (args: { albumTrack: number | { id: number } } | [albumTrack: num
 * @see app/Http/Controllers/TrackDownloadController.php:15
 * @route '/tracks/{albumTrack}/download'
 */
-download.head = (args: { albumTrack: number | { id: number } } | [albumTrack: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+download.head = (args: { albumTrack: string | number | { id: string | number } } | [albumTrack: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: download.url(args, options),
     method: 'head',
 })
@@ -75,7 +75,7 @@ download.head = (args: { albumTrack: number | { id: number } } | [albumTrack: nu
 * @see app/Http/Controllers/TrackDownloadController.php:15
 * @route '/tracks/{albumTrack}/download'
 */
-const downloadForm = (args: { albumTrack: number | { id: number } } | [albumTrack: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+const downloadForm = (args: { albumTrack: string | number | { id: string | number } } | [albumTrack: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: download.url(args, options),
     method: 'get',
 })
@@ -85,7 +85,7 @@ const downloadForm = (args: { albumTrack: number | { id: number } } | [albumTrac
 * @see app/Http/Controllers/TrackDownloadController.php:15
 * @route '/tracks/{albumTrack}/download'
 */
-downloadForm.get = (args: { albumTrack: number | { id: number } } | [albumTrack: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+downloadForm.get = (args: { albumTrack: string | number | { id: string | number } } | [albumTrack: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: download.url(args, options),
     method: 'get',
 })
@@ -95,7 +95,7 @@ downloadForm.get = (args: { albumTrack: number | { id: number } } | [albumTrack:
 * @see app/Http/Controllers/TrackDownloadController.php:15
 * @route '/tracks/{albumTrack}/download'
 */
-downloadForm.head = (args: { albumTrack: number | { id: number } } | [albumTrack: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+downloadForm.head = (args: { albumTrack: string | number | { id: string | number } } | [albumTrack: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: download.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',
@@ -112,7 +112,7 @@ download.form = downloadForm
 * @see app/Http/Controllers/TrackPeaksController.php:11
 * @route '/tracks/{albumTrack}/peaks'
 */
-export const peaks = (args: { albumTrack: number | { id: number } } | [albumTrack: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const peaks = (args: { albumTrack: string | number | { id: string | number } } | [albumTrack: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: peaks.url(args, options),
     method: 'get',
 })
@@ -127,7 +127,7 @@ peaks.definition = {
 * @see app/Http/Controllers/TrackPeaksController.php:11
 * @route '/tracks/{albumTrack}/peaks'
 */
-peaks.url = (args: { albumTrack: number | { id: number } } | [albumTrack: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+peaks.url = (args: { albumTrack: string | number | { id: string | number } } | [albumTrack: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { albumTrack: args }
     }
@@ -160,7 +160,7 @@ peaks.url = (args: { albumTrack: number | { id: number } } | [albumTrack: number
 * @see app/Http/Controllers/TrackPeaksController.php:11
 * @route '/tracks/{albumTrack}/peaks'
 */
-peaks.get = (args: { albumTrack: number | { id: number } } | [albumTrack: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+peaks.get = (args: { albumTrack: string | number | { id: string | number } } | [albumTrack: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: peaks.url(args, options),
     method: 'get',
 })
@@ -170,7 +170,7 @@ peaks.get = (args: { albumTrack: number | { id: number } } | [albumTrack: number
 * @see app/Http/Controllers/TrackPeaksController.php:11
 * @route '/tracks/{albumTrack}/peaks'
 */
-peaks.head = (args: { albumTrack: number | { id: number } } | [albumTrack: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+peaks.head = (args: { albumTrack: string | number | { id: string | number } } | [albumTrack: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: peaks.url(args, options),
     method: 'head',
 })
@@ -180,7 +180,7 @@ peaks.head = (args: { albumTrack: number | { id: number } } | [albumTrack: numbe
 * @see app/Http/Controllers/TrackPeaksController.php:11
 * @route '/tracks/{albumTrack}/peaks'
 */
-const peaksForm = (args: { albumTrack: number | { id: number } } | [albumTrack: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+const peaksForm = (args: { albumTrack: string | number | { id: string | number } } | [albumTrack: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: peaks.url(args, options),
     method: 'get',
 })
@@ -190,7 +190,7 @@ const peaksForm = (args: { albumTrack: number | { id: number } } | [albumTrack: 
 * @see app/Http/Controllers/TrackPeaksController.php:11
 * @route '/tracks/{albumTrack}/peaks'
 */
-peaksForm.get = (args: { albumTrack: number | { id: number } } | [albumTrack: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+peaksForm.get = (args: { albumTrack: string | number | { id: string | number } } | [albumTrack: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: peaks.url(args, options),
     method: 'get',
 })
@@ -200,7 +200,7 @@ peaksForm.get = (args: { albumTrack: number | { id: number } } | [albumTrack: nu
 * @see app/Http/Controllers/TrackPeaksController.php:11
 * @route '/tracks/{albumTrack}/peaks'
 */
-peaksForm.head = (args: { albumTrack: number | { id: number } } | [albumTrack: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+peaksForm.head = (args: { albumTrack: string | number | { id: string | number } } | [albumTrack: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: peaks.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',

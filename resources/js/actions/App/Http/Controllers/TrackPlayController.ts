@@ -4,7 +4,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 * @see app/Http/Controllers/TrackPlayController.php:15
 * @route '/tracks/{albumTrack}/plays'
 */
-const TrackPlayController = (args: { albumTrack: number | { id: number } } | [albumTrack: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+const TrackPlayController = (args: { albumTrack: string | number | { id: string | number } } | [albumTrack: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: TrackPlayController.url(args, options),
     method: 'post',
 })
@@ -19,7 +19,7 @@ TrackPlayController.definition = {
 * @see app/Http/Controllers/TrackPlayController.php:15
 * @route '/tracks/{albumTrack}/plays'
 */
-TrackPlayController.url = (args: { albumTrack: number | { id: number } } | [albumTrack: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+TrackPlayController.url = (args: { albumTrack: string | number | { id: string | number } } | [albumTrack: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { albumTrack: args }
     }
@@ -52,7 +52,7 @@ TrackPlayController.url = (args: { albumTrack: number | { id: number } } | [albu
 * @see app/Http/Controllers/TrackPlayController.php:15
 * @route '/tracks/{albumTrack}/plays'
 */
-TrackPlayController.post = (args: { albumTrack: number | { id: number } } | [albumTrack: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+TrackPlayController.post = (args: { albumTrack: string | number | { id: string | number } } | [albumTrack: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: TrackPlayController.url(args, options),
     method: 'post',
 })
@@ -62,7 +62,7 @@ TrackPlayController.post = (args: { albumTrack: number | { id: number } } | [alb
 * @see app/Http/Controllers/TrackPlayController.php:15
 * @route '/tracks/{albumTrack}/plays'
 */
-const TrackPlayControllerForm = (args: { albumTrack: number | { id: number } } | [albumTrack: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const TrackPlayControllerForm = (args: { albumTrack: string | number | { id: string | number } } | [albumTrack: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: TrackPlayController.url(args, options),
     method: 'post',
 })
@@ -72,7 +72,7 @@ const TrackPlayControllerForm = (args: { albumTrack: number | { id: number } } |
 * @see app/Http/Controllers/TrackPlayController.php:15
 * @route '/tracks/{albumTrack}/plays'
 */
-TrackPlayControllerForm.post = (args: { albumTrack: number | { id: number } } | [albumTrack: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+TrackPlayControllerForm.post = (args: { albumTrack: string | number | { id: string | number } } | [albumTrack: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: TrackPlayController.url(args, options),
     method: 'post',
 })

@@ -19,6 +19,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('settings/reports', [ReportController::class, 'index'])->name('reports.index');
     Route::post('settings/reports', [ReportController::class, 'store'])->name('reports.store');
     Route::get('settings/reports/{musicUsageReport}/download', [ReportController::class, 'download'])->name('reports.download');
+    Route::delete('settings/reports/{musicUsageReport}', [ReportController::class, 'destroy'])->name('reports.destroy');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
