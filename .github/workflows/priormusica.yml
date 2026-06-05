@@ -66,8 +66,10 @@ jobs:
             git reset --hard origin/main
 
             mkdir -p /home/priormusica-app/shared/audio
-            rm -rf public/audio
-            ln -sfn /home/priormusica-app/shared/audio public/audio
+            if [ ! -L public/audio ]; then
+              rm -rf public/audio
+              ln -s /home/priormusica-app/shared/audio public/audio
+            fi
 
             composer install --no-dev --optimize-autoloader
 
