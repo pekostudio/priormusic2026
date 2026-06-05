@@ -4,11 +4,13 @@ import { Download, ListMusic, Pause, Play, Search } from 'lucide-react';
 import { useState } from 'react';
 import { AddToPlaylistButton } from '@/components/add-to-playlist-button';
 import { FavoriteTrackButton } from '@/components/favorite-track-button';
+import { Pagination } from '@/components/pagination';
 import { TrackWaveformPreview } from '@/components/track-waveform-preview';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAudioPlayer } from '@/hooks/use-audio-player';
 import { tracks as tracksRoute } from '@/routes';
+import { index as albumsIndex } from '@/routes/albums';
 import type { BreadcrumbItem, PlaylistSummary } from '@/types';
 
 type TrackRow = {
@@ -22,11 +24,16 @@ type TrackRow = {
     keywords: string | null;
     composer: string | null;
     publisher: string | null;
+    genre_tag: {
+        id: number;
+        name: string;
+    } | null;
     cover_url: string | null;
     album: {
         id: number;
         title: string;
         code: string;
+        library_id: number | null;
         library: string | null;
     } | null;
     album_track: {
@@ -45,6 +52,11 @@ type TrackRow = {
 
 type PaginatedTracks = {
     data: TrackRow[];
+    links: {
+        url: string | null;
+        label: string;
+        active: boolean;
+    }[];
     prev_page_url: string | null;
     next_page_url: string | null;
     from: number | null;
@@ -84,6 +96,25 @@ const normalizeBpmValue = (value: number | null, fallback: number): number => {
 
     return Math.min(Math.max(value, BPM_MIN), BPM_MAX);
 };
+
+const albumLibraryUrl = (libraryId: number): string =>
+    albumsIndex.url({
+        query: {
+            library_ids: [libraryId],
+            search: '',
+        },
+    });
+
+const trackGenreUrl = (genreId: number): string =>
+    tracksRoute.url({
+        query: {
+            bpm_max: '',
+            bpm_min: '',
+            genre_id: genreId,
+            keyword_id: '',
+            search: '',
+        },
+    });
 
 export default function TracksIndex({
     tracks,
@@ -247,36 +278,118 @@ export default function TracksIndex({
                                     isCurrentTrack(track.album_track.id) &&
                                     isPlaying;
 
+                                const toggleTrackPlayback = (
+                                    track: TrackRow,
+                                ) => {
+                                    if (!track.album_track) {
+                                        return;
+                                    }
+
+                                    if (
+                                        isCurrentTrack(track.album_track.id) &&
+                                        isPlaying
+                                    ) {
+                                        pauseTrack();
+
+                                        return;
+                                    }
+
+                                    if (!track.album_track.audio_url) {
+                                        return;
+                                    }
+
+                                    playTrack({
+                                        id: track.album_track.id,
+                                        title: track.title,
+                                        artist: track.album?.title ?? null,
+                                        audioUrl: track.album_track.audio_url,
+                                        peaksUrl: track.album_track.peaks_url,
+                                        playUrl: track.album_track.play_url,
+                                        coverUrl: track.cover_url,
+                                    });
+                                };
+
                                 return (
                                     <div
                                         key={track.id}
                                         className="grid gap-2 px-4 py-2 md:grid-cols-[56px_1fr_auto] md:items-center"
                                     >
-                                        <div className="size-12 overflow-hidden rounded-md bg-muted">
+                                        <div className="size-12 overflow-hidden hover:cursor-pointer">
                                             {track.cover_url && (
                                                 <img
                                                     src={track.cover_url}
                                                     alt=""
                                                     className="size-full object-cover"
+                                                    onClick={() =>
+                                                        toggleTrackPlayback(
+                                                            track,
+                                                        )
+                                                    }
                                                 />
                                             )}
                                         </div>
 
-                                        <div className="flex min-w-0 flex-row items-center justify-between gap-4">
-                                            <div className="flex max-w-90 min-w-90 flex-col gap-0 overflow-x-hidden">
-                                                <p className="truncate font-medium">
+                                        <div className="flex min-w-0 flex-col justify-between gap-4 overflow-x-hidden xl:flex-row xl:items-center xl:overflow-x-visible">
+                                            <div className="flex flex-col gap-0 xl:max-w-140 xl:min-w-140">
+                                                <p
+                                                    className="truncate text-sm font-medium hover:cursor-pointer xl:text-base"
+                                                    onClick={() =>
+                                                        toggleTrackPlayback(
+                                                            track,
+                                                        )
+                                                    }
+                                                >
                                                     {track.title}
                                                 </p>
-                                                <p className="w-fit truncate rounded bg-secondary px-2 py-0.5 text-xs text-secondary-foreground">
+                                                <p className="w-fit rounded bg-secondary px-2 py-0.5 text-[9px] text-secondary-foreground xl:text-[10px]">
                                                     {track.album?.title ??
                                                         'No album'}
-                                                    {track.album?.library
-                                                        ? ` · ${track.album.library}`
-                                                        : ''}
+                                                    {track.album && (
+                                                        <>
+                                                            {' · '}
+                                                            {track.album
+                                                                .library_id ? (
+                                                                <Link
+                                                                    href={albumLibraryUrl(
+                                                                        track
+                                                                            .album
+                                                                            .library_id,
+                                                                    )}
+                                                                    className="hover:underline"
+                                                                    prefetch
+                                                                >
+                                                                    {track.album
+                                                                        .library ??
+                                                                        track
+                                                                            .album
+                                                                            .code}
+                                                                </Link>
+                                                            ) : (
+                                                                (track.album
+                                                                    .library ??
+                                                                track.album
+                                                                    .code)
+                                                            )}
+                                                        </>
+                                                    )}
                                                 </p>
-                                                <span className="mt-1 text-xs">
-                                                    {track.genre}
-                                                </span>
+                                                {track.genre &&
+                                                    (track.genre_tag ? (
+                                                        <Link
+                                                            href={trackGenreUrl(
+                                                                track.genre_tag
+                                                                    .id,
+                                                            )}
+                                                            className="mt-1 w-fit text-xs hover:underline"
+                                                            prefetch
+                                                        >
+                                                            {track.genre}
+                                                        </Link>
+                                                    ) : (
+                                                        <span className="mt-1 text-xs">
+                                                            {track.genre}
+                                                        </span>
+                                                    ))}
                                             </div>
                                             <div className="flex w-full flex-row gap-4">
                                                 {track.album_track && (
@@ -347,44 +460,9 @@ export default function TracksIndex({
                                                         ? `Pause ${track.title}`
                                                         : `Play ${track.title}`
                                                 }
-                                                onClick={() => {
-                                                    if (!track.album_track) {
-                                                        return;
-                                                    }
-
-                                                    if (isTrackPlaying) {
-                                                        pauseTrack();
-
-                                                        return;
-                                                    }
-
-                                                    if (
-                                                        !track.album_track
-                                                            .audio_url
-                                                    ) {
-                                                        return;
-                                                    }
-
-                                                    playTrack({
-                                                        id: track.album_track
-                                                            .id,
-                                                        title: track.title,
-                                                        artist:
-                                                            track.album
-                                                                ?.title ?? null,
-                                                        audioUrl:
-                                                            track.album_track
-                                                                .audio_url,
-                                                        peaksUrl:
-                                                            track.album_track
-                                                                .peaks_url,
-                                                        playUrl:
-                                                            track.album_track
-                                                                .play_url,
-                                                        coverUrl:
-                                                            track.cover_url,
-                                                    });
-                                                }}
+                                                onClick={() =>
+                                                    toggleTrackPlayback(track)
+                                                }
                                             >
                                                 {isTrackPlaying ? (
                                                     <Pause className="size-4" />
@@ -458,26 +536,7 @@ export default function TracksIndex({
                                 ? `Showing ${tracks.from}-${tracks.to}`
                                 : 'No results'}
                         </p>
-                        <div className="flex gap-2">
-                            <Button
-                                asChild
-                                variant="outline"
-                                disabled={!tracks.prev_page_url}
-                            >
-                                <Link href={tracks.prev_page_url ?? '#'}>
-                                    Previous
-                                </Link>
-                            </Button>
-                            <Button
-                                asChild
-                                variant="outline"
-                                disabled={!tracks.next_page_url}
-                            >
-                                <Link href={tracks.next_page_url ?? '#'}>
-                                    Next
-                                </Link>
-                            </Button>
-                        </div>
+                        <Pagination links={tracks.links} />
                     </div>
                 </div>
             </div>

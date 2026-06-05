@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { cn } from '@/lib/utils';
 
 type WaveformPreviewProps = {
     peaksUrl: string;
@@ -6,6 +7,7 @@ type WaveformPreviewProps = {
     interactive?: boolean;
     amplitude?: number;
     size?: 'preview' | 'player';
+    className?: string;
     onSeek?: (progress: number) => void;
 };
 
@@ -15,6 +17,7 @@ export function WaveformPreview({
     interactive = false,
     amplitude = 1,
     size = interactive ? 'player' : 'preview',
+    className,
     onSeek,
 }: WaveformPreviewProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -246,7 +249,13 @@ export function WaveformPreview({
     return (
         <canvas
             ref={canvasRef}
-            className={`${size === 'player' ? 'h-12' : 'h-12'} w-full ${interactive ? 'cursor-pointer touch-none rounded-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none' : ''}`}
+            className={cn(
+                size === 'player' ? 'h-12' : 'h-12',
+                'w-full',
+                interactive &&
+                    'cursor-pointer touch-none rounded-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
+                className,
+            )}
             role={interactive ? 'slider' : undefined}
             tabIndex={interactive ? 0 : undefined}
             aria-hidden={interactive ? undefined : true}

@@ -26,6 +26,7 @@ class AlbumTrackPayload
             'artist' => $this->artistName($track),
             'version' => $track?->version,
             'genre' => $track?->genre,
+            'styles' => $this->styles($track),
             'time' => $track?->time,
             'duration_seconds' => $this->durationSeconds($track),
             'bpm' => $this->bpm($track),
@@ -47,6 +48,24 @@ class AlbumTrackPayload
             'playlist_url' => route('tracks.playlists.store', $albumTrack),
             'playlist_ids' => $this->playlistIds($albumTrack, $user),
         ];
+    }
+
+    /**
+     * @return list<array{id:int,name:string}>
+     */
+    private function styles(?Track $track): array
+    {
+        if ($track === null || ! $track->relationLoaded('genreTags')) {
+            return [];
+        }
+
+        return $track->genreTags
+            ->map(fn ($genre): array => [
+                'id' => $genre->id,
+                'name' => $genre->name,
+            ])
+            ->values()
+            ->all();
     }
 
     private function isFavorite(AlbumTrack $albumTrack, ?User $user): bool

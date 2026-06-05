@@ -28,6 +28,7 @@ class TrackController extends Controller
         $tracks = Track::query()
             ->with([
                 'album.library',
+                'genreTags',
                 'albumTrack' => fn ($query) => $query->with([
                     'album.library',
                     'tracks' => fn ($query) => $query->orderBy('track_number')->orderBy('name'),
@@ -58,28 +59,37 @@ class TrackController extends Controller
             ->orderByDesc('id')
             ->paginate(100)
             ->withQueryString()
-            ->through(fn (Track $track): array => [
-                'id' => $track->id,
-                'title' => $track->display_title ?: $track->name,
-                'name' => $track->name,
-                'version' => $track->version,
-                'genre' => $track->genre,
-                'time' => $track->time,
-                'bpm' => $track->bpm > 0 ? $track->bpm : null,
-                'keywords' => $track->keywords,
-                'composer' => $track->composer,
-                'publisher' => $track->publisher,
-                'cover_url' => AlbumCoverThumbnail::url($track->cover ?: $track->album?->cover),
-                'album' => $track->album !== null ? [
-                    'id' => $track->album->id,
-                    'title' => $track->album->displaytitle ?: $track->album->name,
-                    'code' => $track->album->code,
-                    'library' => $track->album->library?->name,
-                ] : null,
-                'album_track' => $track->albumTrack !== null
-                    ? $albumTrackPayload->make($track->albumTrack, $user)
-                    : null,
-            ]);
+            ->through(function (Track $track) use ($albumTrackPayload, $user): array {
+                $genreTag = $track->genreTags->first();
+
+                return [
+                    'id' => $track->id,
+                    'title' => $track->display_title ?: $track->name,
+                    'name' => $track->name,
+                    'version' => $track->version,
+                    'genre' => $track->genre,
+                    'time' => $track->time,
+                    'bpm' => $track->bpm > 0 ? $track->bpm : null,
+                    'keywords' => $track->keywords,
+                    'composer' => $track->composer,
+                    'publisher' => $track->publisher,
+                    'genre_tag' => $genreTag !== null ? [
+                        'id' => $genreTag->id,
+                        'name' => $genreTag->name,
+                    ] : null,
+                    'cover_url' => AlbumCoverThumbnail::url($track->cover ?: $track->album?->cover),
+                    'album' => $track->album !== null ? [
+                        'id' => $track->album->id,
+                        'title' => $track->album->displaytitle ?: $track->album->name,
+                        'code' => $track->album->code,
+                        'library_id' => $track->album->library_id,
+                        'library' => $track->album->library?->name,
+                    ] : null,
+                    'album_track' => $track->albumTrack !== null
+                        ? $albumTrackPayload->make($track->albumTrack, $user)
+                        : null,
+                ];
+            });
 
         return Inertia::render('tracks/index', [
             'tracks' => $tracks,

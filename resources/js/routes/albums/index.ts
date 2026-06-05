@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\AlbumController::index
-* @see app/Http/Controllers/AlbumController.php:15
+* @see app/Http/Controllers/AlbumController.php:18
 * @route '/albums'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\AlbumController::index
-* @see app/Http/Controllers/AlbumController.php:15
+* @see app/Http/Controllers/AlbumController.php:18
 * @route '/albums'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\AlbumController::index
-* @see app/Http/Controllers/AlbumController.php:15
+* @see app/Http/Controllers/AlbumController.php:18
 * @route '/albums'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\AlbumController::index
-* @see app/Http/Controllers/AlbumController.php:15
+* @see app/Http/Controllers/AlbumController.php:18
 * @route '/albums'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\AlbumController::index
-* @see app/Http/Controllers/AlbumController.php:15
+* @see app/Http/Controllers/AlbumController.php:18
 * @route '/albums'
 */
 const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 /**
 * @see \App\Http\Controllers\AlbumController::index
-* @see app/Http/Controllers/AlbumController.php:15
+* @see app/Http/Controllers/AlbumController.php:18
 * @route '/albums'
 */
 indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\AlbumController::index
-* @see app/Http/Controllers/AlbumController.php:15
+* @see app/Http/Controllers/AlbumController.php:18
 * @route '/albums'
 */
 indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\AlbumController::show
-* @see app/Http/Controllers/AlbumController.php:54
+* @see app/Http/Controllers/AlbumController.php:96
 * @route '/albums/{album}'
 */
 export const show = (args: { album: number | { id: number } } | [album: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -97,7 +97,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\AlbumController::show
-* @see app/Http/Controllers/AlbumController.php:54
+* @see app/Http/Controllers/AlbumController.php:96
 * @route '/albums/{album}'
 */
 show.url = (args: { album: number | { id: number } } | [album: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -130,7 +130,7 @@ show.url = (args: { album: number | { id: number } } | [album: number | { id: nu
 
 /**
 * @see \App\Http\Controllers\AlbumController::show
-* @see app/Http/Controllers/AlbumController.php:54
+* @see app/Http/Controllers/AlbumController.php:96
 * @route '/albums/{album}'
 */
 show.get = (args: { album: number | { id: number } } | [album: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -140,7 +140,7 @@ show.get = (args: { album: number | { id: number } } | [album: number | { id: nu
 
 /**
 * @see \App\Http\Controllers\AlbumController::show
-* @see app/Http/Controllers/AlbumController.php:54
+* @see app/Http/Controllers/AlbumController.php:96
 * @route '/albums/{album}'
 */
 show.head = (args: { album: number | { id: number } } | [album: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -150,7 +150,7 @@ show.head = (args: { album: number | { id: number } } | [album: number | { id: n
 
 /**
 * @see \App\Http\Controllers\AlbumController::show
-* @see app/Http/Controllers/AlbumController.php:54
+* @see app/Http/Controllers/AlbumController.php:96
 * @route '/albums/{album}'
 */
 const showForm = (args: { album: number | { id: number } } | [album: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -160,7 +160,7 @@ const showForm = (args: { album: number | { id: number } } | [album: number | { 
 
 /**
 * @see \App\Http\Controllers\AlbumController::show
-* @see app/Http/Controllers/AlbumController.php:54
+* @see app/Http/Controllers/AlbumController.php:96
 * @route '/albums/{album}'
 */
 showForm.get = (args: { album: number | { id: number } } | [album: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -170,7 +170,7 @@ showForm.get = (args: { album: number | { id: number } } | [album: number | { id
 
 /**
 * @see \App\Http\Controllers\AlbumController::show
-* @see app/Http/Controllers/AlbumController.php:54
+* @see app/Http/Controllers/AlbumController.php:96
 * @route '/albums/{album}'
 */
 showForm.head = (args: { album: number | { id: number } } | [album: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

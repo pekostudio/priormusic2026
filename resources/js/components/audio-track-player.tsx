@@ -116,9 +116,9 @@ export function AudioTrackPlayer() {
 
     return (
         <div className="fixed right-0 bottom-0 left-0 z-40 border-t border-border bg-background/95 shadow-2xl backdrop-blur supports-[backdrop-filter]:bg-background/85">
-            <div className="grid gap-3 p-3 md:grid-cols-[minmax(220px,320px)_120px_minmax(220px,1fr)] md:items-center md:px-4">
-                <div className="flex min-w-0 items-center gap-3">
-                    <div className="size-12 overflow-hidden rounded-md bg-muted">
+            <div className="grid grid-cols-[minmax(0,1fr)_3rem_minmax(5.5rem,0.9fr)] items-center gap-2 p-2 sm:grid-cols-[minmax(0,1fr)_3.5rem_minmax(8rem,1fr)] md:grid-cols-[minmax(220px,320px)_120px_minmax(220px,1fr)] md:gap-3 md:px-4 md:py-3">
+                <div className="flex min-w-0 flex-row items-center gap-2 md:gap-3 xl:min-w-0">
+                    <div className="size-10 shrink-0 overflow-hidden rounded-md bg-muted md:size-12">
                         {currentTrack?.coverUrl && (
                             <img
                                 src={currentTrack.coverUrl}
@@ -131,7 +131,7 @@ export function AudioTrackPlayer() {
                         <p className="truncate text-sm font-medium">
                             {currentTrack?.title ?? 'Select a track'}
                         </p>
-                        <p className="mt-1 truncate text-xs text-muted-foreground">
+                        <p className="mt-0.5 truncate text-xs text-muted-foreground md:mt-1">
                             {currentTrack?.artist ??
                                 'Playback will stay here while you browse.'}
                         </p>
@@ -139,31 +139,33 @@ export function AudioTrackPlayer() {
                 </div>
 
                 {currentTrack ? (
-                    <AudioPlayer
-                        ref={playerRef}
-                        src={currentTrack.audioUrl}
-                        onPlay={() => {
-                            setIsPlaying(true);
-                            logPlay();
-                        }}
-                        onPause={() => setIsPlaying(false)}
-                        onEnded={() => setIsPlaying(false)}
-                        onLoadedMetaData={syncAudioTime}
-                        onListen={syncAudioTime}
-                        onSeeked={syncAudioTime}
-                        listenInterval={250}
-                        showJumpControls={false}
-                        customProgressBarSection={[]}
-                        customControlsSection={[RHAP_UI.MAIN_CONTROLS]}
-                        autoPlayAfterSrcChange={true}
-                        style={{
-                            background: 'transparent',
-                            boxShadow: 'none',
-                            padding: 0,
-                        }}
-                    />
+                    <div className="min-w-0 [&_.rhap_button-clear]:m-0 [&_.rhap_container]:min-w-0 [&_.rhap_main-controls]:justify-center [&_.rhap_main-controls-button]:m-0 [&_.rhap_main-controls-button]:size-11 [&_.rhap_main-controls-button]:text-muted-foreground md:[&_.rhap_main-controls-button]:size-14">
+                        <AudioPlayer
+                            ref={playerRef}
+                            src={currentTrack.audioUrl}
+                            onPlay={() => {
+                                setIsPlaying(true);
+                                logPlay();
+                            }}
+                            onPause={() => setIsPlaying(false)}
+                            onEnded={() => setIsPlaying(false)}
+                            onLoadedMetaData={syncAudioTime}
+                            onListen={syncAudioTime}
+                            onSeeked={syncAudioTime}
+                            listenInterval={250}
+                            showJumpControls={false}
+                            customProgressBarSection={[]}
+                            customControlsSection={[RHAP_UI.MAIN_CONTROLS]}
+                            autoPlayAfterSrcChange={true}
+                            style={{
+                                background: 'transparent',
+                                boxShadow: 'none',
+                                padding: 0,
+                            }}
+                        />
+                    </div>
                 ) : (
-                    <div className="flex min-h-14 items-center justify-center rounded-md border border-border bg-muted/40 px-4 text-sm text-muted-foreground">
+                    <div className="hidden min-h-14 items-center justify-center rounded-md border border-border bg-muted/40 px-4 text-sm text-muted-foreground xl:flex">
                         Select a track to start playback.
                     </div>
                 )}
@@ -175,10 +177,11 @@ export function AudioTrackPlayer() {
                             progress={currentProgress}
                             amplitude={1.8}
                             interactive={true}
+                            className="h-8 sm:h-9 md:h-12"
                             onSeek={seekToProgress}
                         />
                     ) : (
-                        <div className="flex h-20 items-center justify-center rounded-md border border-dashed border-border text-xs text-muted-foreground">
+                        <div className="hidden h-20 items-center justify-center rounded-md border border-dashed border-border text-xs text-muted-foreground xl:flex">
                             Track waveform
                         </div>
                     )}
