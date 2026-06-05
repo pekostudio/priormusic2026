@@ -327,8 +327,8 @@ export default function AlbumsShow({
                                             )}
                                         </div>
 
-                                        <div className="flex min-w-0 flex-col justify-between gap-4 overflow-x-hidden xl:flex-row xl:items-center xl:overflow-x-visible">
-                                            <div className="flex flex-col gap-2 xl:max-w-140 xl:min-w-140 xl:gap-1">
+                                        <div className="flex min-w-0 flex-col gap-4 overflow-x-hidden xl:flex-row xl:items-center xl:overflow-x-visible">
+                                            <div className="flex flex-col gap-2 max-w-90 min-w-90 xl:gap-1">
                                                 <p
                                                     className="truncate text-sm font-medium hover:cursor-pointer xl:text-base"
                                                     onClick={
@@ -348,8 +348,8 @@ export default function AlbumsShow({
                                                     </span>
                                                 )}
                                             </div>
-                                            <div className="flex flex-row gap-4">
-                                                <div className="w-200">
+                                            <div className="flex gap-4 flex-1">
+                                                <div className="w-full">
                                                     <TrackWaveformPreview
                                                         peaksUrl={
                                                             track.peaks_url
